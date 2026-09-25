@@ -1,4 +1,4 @@
-# 📄 PDF Question Answering System using RAG
+#  PDF Question Answering System using RAG
 
 A production-grade, end-to-end **Retrieval-Augmented Generation (RAG)** application built with **Python 3.11+**, **LangChain**, **Google Gemini**, **Pinecone Vector Database**, and **Streamlit**.
 
@@ -6,7 +6,7 @@ This system allows users to upload single or multiple PDF documents, automatical
 
 ---
 
-## 📌 Table of Contents
+##  Table of Contents
 - [Overview & Objectives](#-overview--objectives)
 - [System Architecture](#-system-architecture)
 - [Key Features](#-key-features)
@@ -25,7 +25,7 @@ This system allows users to upload single or multiple PDF documents, automatical
 
 ---
 
-## 🎯 Overview & Objectives
+##  Overview & Objectives
 
 Large Language Models (LLMs) often hallucinate when asked specific questions about custom or private documents. **Retrieval-Augmented Generation (RAG)** solves this by retrieving relevant text passages from a vector database before handing them to the LLM as context.
 
@@ -38,7 +38,7 @@ Large Language Models (LLMs) often hallucinate when asked specific questions abo
 
 ---
 
-## 🏗️ System Architecture
+##  System Architecture
 
 ```text
                📄 PDF Upload(s)
@@ -76,7 +76,7 @@ User Question ──► Semantic Search (Top-K)
 
 ---
 
-## ✨ Key Features
+##  Key Features
 
 - **Multi-PDF Processing**: Upload and query multiple documents simultaneously.
 - **SHA-256 Duplicate Suppression**: Automatically detects identical files and avoids redundant embedding API calls.
@@ -89,7 +89,7 @@ User Question ──► Semantic Search (Top-K)
 
 ---
 
-## 🛠️ Technology Stack
+##  Technology Stack
 
 | Layer | Technology |
 |---|---|
@@ -106,7 +106,7 @@ User Question ──► Semantic Search (Top-K)
 
 ---
 
-## 📁 Project Directory Structure
+##  Project Directory Structure
 
 ```text
 PDF-RAG-QA/
@@ -152,7 +152,7 @@ PDF-RAG-QA/
 
 ---
 
-## ⚙️ Local Setup & Installation
+##  Local Setup & Installation
 
 ### Prerequisites
 - Windows / macOS / Linux
@@ -183,7 +183,7 @@ PDF-RAG-QA/
 
 ---
 
-## 🔑 Environment Variables
+##  Environment Variables
 
 Create a `.env` file in the root directory based on `.env.example`:
 
@@ -206,7 +206,7 @@ DEFAULT_TOP_K=5
 
 ---
 
-## 🌲 Pinecone Vector Database Setup
+##  Pinecone Vector Database Setup
 
 The application automatically verifies and creates the index when started. However, to create it manually in the Pinecone Console:
 
@@ -217,7 +217,7 @@ The application automatically verifies and creates the index when started. Howev
 
 ---
 
-## 🚀 Running the Application
+##  Running the Application
 
 ### 1. Launch Streamlit Web UI
 ```powershell
@@ -238,7 +238,7 @@ pytest
 
 ---
 
-## 🐳 Containerization (Docker)
+##  Containerization (Docker)
 
 ### Build Docker Image
 ```powershell
@@ -254,7 +254,7 @@ Access the application at `http://localhost:8501`.
 
 ---
 
-## ☁️ Cloud Deployment (Render / Cloud Platforms)
+##  Cloud Deployment (Render / Cloud Platforms)
 
 ### Deploying on Render:
 1. Create a new **Web Service** on Render connected to your GitHub repository.
@@ -270,7 +270,7 @@ Access the application at `http://localhost:8501`.
 
 ---
 
-## 📊 RAG Evaluation & Metrics
+##  RAG Evaluation & Metrics
 
 The RAG pipeline is evaluated using five criteria:
 1. **Retrieval Relevance**: Ensuring top-$k$ chunks contain the required domain context.
@@ -281,5 +281,5 @@ The RAG pipeline is evaluated using five criteria:
 
 ---
 
-## 📝 Author
+##  Author
 Developed as a production RAG application showcase using Google Gemini & Pinecone.
