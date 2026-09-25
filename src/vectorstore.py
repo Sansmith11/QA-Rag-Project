@@ -13,7 +13,7 @@ class VectorStoreError(Exception):
 
 def get_pinecone_client(api_key: Optional[str] = None) -> Pinecone:
     """Initialize and return the native Pinecone SDK client."""
-    key = api_key or Config.PINECONE_API_KEY
+    key = api_key or Config.get_pinecone_api_key()
     if not key or key == "your_pinecone_api_key_here":
         raise VectorStoreError(
             "PINECONE_API_KEY is missing or unconfigured in your .env file."
@@ -56,7 +56,7 @@ def get_vectorstore(
     Retrieve an initialized LangChain PineconeVectorStore instance.
     """
     idx_name = index_name or Config.PINECONE_INDEX_NAME
-    key = api_key or Config.PINECONE_API_KEY
+    key = api_key or Config.get_pinecone_api_key()
     
     ensure_index_exists(index_name=idx_name, api_key=key)
     embedding_model = get_embedding_model()

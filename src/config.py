@@ -3,10 +3,16 @@ from pathlib import Path
 from typing import Tuple, List
 from dotenv import load_dotenv
 
-# Locate base directory and load .env file
 BASE_DIR = Path(__file__).resolve().parent.parent
 ENV_PATH = BASE_DIR / ".env"
-load_dotenv(dotenv_path=ENV_PATH)
+
+
+def reload_env():
+    """Reload environment variables from .env file into os.environ."""
+    load_dotenv(dotenv_path=ENV_PATH, override=True)
+
+
+reload_env()
 
 
 class Config:
@@ -17,17 +23,33 @@ class Config:
     UPLOADS_DIR: Path = DATA_DIR / "uploads"
     PROCESSED_DIR: Path = DATA_DIR / "processed"
 
-    # API Keys
-    GOOGLE_API_KEY: str = os.getenv("GOOGLE_API_KEY", "")
-    PINECONE_API_KEY: str = os.getenv("PINECONE_API_KEY", "")
+    @classmethod
+    def get_google_api_key(cls) -> str:
+        reload_env()
+        raw = os.getenv("GOOGLE_API_KEY", "")
+        return raw.strip("'\" \t\r\n")
+
+    @classmethod
+    def get_pinecone_api_key(cls) -> str:
+        reload_env()
+        raw = os.getenv("PINECONE_API_KEY", "")
+        return raw.strip("'\" \t\r\n")
+
+    @property
+    def GOOGLE_API_KEY(self) -> str:
+        return self.get_google_api_key()
+
+    @property
+    def PINECONE_API_KEY(self) -> str:
+        return self.get_pinecone_api_key()
+
     PINECONE_INDEX_NAME: str = os.getenv("PINECONE_INDEX_NAME", "pdf-rag-index")
 
     # Embedding & LLM Settings
-    # models/text-embedding-004 produces 768-dimensional vectors
-    EMBEDDING_MODEL_NAME: str = os.getenv("EMBEDDING_MODEL_NAME", "models/text-embedding-004")
-    EMBEDDING_DIMENSION: int = 768
+    EMBEDDING_MODEL_NAME: str = os.getenv("EMBEDDING_MODEL_NAME", "models/gemini-embedding-001")
+    EMBEDDING_DIMENSION: int = int(os.getenv("EMBEDDING_DIMENSION", "768"))
 
-    LLM_MODEL_NAME: str = os.getenv("LLM_MODEL_NAME", "gemini-1.5-flash")
+    LLM_MODEL_NAME: str = os.getenv("LLM_MODEL_NAME", "gemini-3.5-flash-lite")
     LLM_TEMPERATURE: float = float(os.getenv("LLM_TEMPERATURE", "0.0"))
 
     # Default Chunking & Retrieval Parameters
@@ -45,15 +67,16 @@ class Config:
     def validate_api_keys(cls) -> Tuple[bool, List[str]]:
         """
         Validate that required API keys are configured and not default placeholders.
-        
-        Returns:
-            Tuple[bool, List[str]]: (is_valid, list_of_missing_or_invalid_keys)
         """
+        reload_env()
+        gkey = cls.get_google_api_key()
+        pkey = cls.get_pinecone_api_key()
+
         missing = []
-        if not cls.GOOGLE_API_KEY or cls.GOOGLE_API_KEY == "your_google_api_key_here":
-            missing.append("GOOGLE_API_KEY")
-        if not cls.PINECONE_API_KEY or cls.PINECONE_API_KEY == "your_pinecone_api_key_here":
-            missing.append("PINECONE_API_KEY")
+        if not gkey or gkey == "your_google_api_key_here" or len(gkey) < 10:
+            missing.append("GOOGLE_API_KEY (Get from https://aistudio.google.com/app/apikey)")
+        if not pkey or pkey == "your_pinecone_api_key_here" or len(pkey) < 10:
+            missing.append("PINECONE_API_KEY (Get from https://app.pinecone.io/)")
         return (len(missing) == 0, missing)
 
 

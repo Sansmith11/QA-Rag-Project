@@ -3,7 +3,7 @@ from langchain_core.documents import Document
 from src.config import Config
 from src.retriever import retrieve_documents, format_retrieved_context, RetrieverError
 from src.prompts import RAG_PROMPT_TEMPLATE
-from src.llm import get_llm, LLMError
+from src.llm import get_llm, invoke_llm_with_fallback, LLMError
 
 
 class RAGPipelineError(Exception):
@@ -93,13 +93,24 @@ def ask_question(
     context_text = format_retrieved_context(retrieved_results)
 
     try:
-        llm = get_llm()
         prompt_value = RAG_PROMPT_TEMPLATE.format_messages(
             context=context_text,
             question=clean_query
         )
-        response = llm.invoke(prompt_value)
-        answer_text = response.content.strip()
+        response = invoke_llm_with_fallback(prompt_value)
+        content = response.content
+        if isinstance(content, list):
+            text_blocks = []
+            for part in content:
+                if isinstance(part, str):
+                    text_blocks.append(part)
+                elif isinstance(part, dict) and "text" in part:
+                    text_blocks.append(part["text"])
+                elif hasattr(part, "text"):
+                    text_blocks.append(str(part.text))
+            answer_text = "\n".join(text_blocks).strip()
+        else:
+            answer_text = str(content).strip()
     except Exception as err:
         raise RAGPipelineError(f"LLM generation step failed: {str(err)}") from err
 
